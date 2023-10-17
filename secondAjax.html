@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ajax 加强</title>
+
+    <link rel="stylesheet" href="css/basic.css">
+</head>
+<body>
+    <div class="main">
+        <h2>Ajax 加强</h2>
+        <h3>XMLHttpRequest</h3>
+        <div class="xhr">
+            <button>get 请求</button> 
+            <button>post 请求</button> 
+        </div>
+        <h3>其他（略）</h3>
+    </div>
+
+    <script>
+        (function() {
+            // get 请求
+            document.querySelectorAll('.xhr button')[0].onclick = function() {
+                let xhr = new XMLHttpRequest();
+                xhr.open('GET', 'https://api.btstu.cn/yan/api.php?charset=utf-8&encode=json');
+                xhr.onreadystatechange = function() {
+                    if (xhr.readyState === 4 && xhr.status === 200) {
+                        console.log(xhr.responseText);
+                        // 序列化与反序列化
+                        console.log(JSON.parse(xhr.responseText));
+                        console.log(JSON.stringify(JSON.parse(xhr.responseText)));
+                    }
+                }
+                xhr.send();
+            }
+            // post 请求
+            document.querySelectorAll('.xhr button')[1].onclick = function() {
+                let xhr = new XMLHttpRequest();
+                xhr.open('POST', 'https://api.btstu.cn/yan/api.php');
+                xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+                xhr.onreadystatechange = function() {
+                    if (xhr.readyState === 4 && xhr.status === 200) {
+                        console.log(xhr.responseText);
+                    }
+                }
+                xhr.send('charset=utf-8&encode=json');
+            }
+
+            // URL编码与解码
+            let url = '你好';
+            console.log(encodeURI(url));
+            console.log(decodeURI(encodeURI(url)));
+        })();
+    </script>
+</body>
+</html>

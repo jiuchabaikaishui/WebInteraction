@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>初识 Ajax</title>
+
+    <link rel="stylesheet" href="css/basic.css">
+    <script src="js/jquery-3.7.1.min.js"></script>
+</head>
+<body>
+    <div class="main">
+        <h2>初识 Ajax</h2>
+        <h3>jQuery中的Ajax</h3>
+        <div class="jqAjax">
+            <button>不带参数 get</button> 
+            <button>带参数 get</button> 
+            <button>不带参数 post</button> 
+            <button>带参数 post</button> 
+            <button>ajax</button> 
+        </div>
+        <h3>form表单</h3>
+        <form action="https://api.btstu.cn/yan/api.php" method="get" id="form1">
+            charset: <input type="text" name="charset"> <br>
+            encode: <input type="text" name="encode"> <br>
+            password: <input type="password" name="password"> <br>
+            <button type="submit">提交</button>
+        </form>
+        <h3>art-template</h3>
+        <div class="container">
+
+        </div>
+        <h3>用自定义的模板引擎</h3>
+        <div class="custom">
+
+        </div>
+    </div>
+
+    <script>
+        (function() {
+            $('.jqAjax button:eq(0)').on('click', function() {
+                $.get('https://api.btstu.cn/yan/api.php', function(data, status, xhr) {
+                    console.log(data);
+                    console.log(status);
+                    console.log(xhr);
+                });
+            });
+            $('.jqAjax button:eq(1)').on('click', function() {
+                $.get('https://api.btstu.cn/yan/api.php', {
+                    charset: 'utf-8',
+                    encode: 'json'
+                }, function(data, status, xhr) {
+                    console.log(data);
+                    console.log(status);
+                    console.log(xhr);
+                })
+            });
+            $('.jqAjax button:eq(2)').on('click', function() {
+                $.post('https://api.btstu.cn/yan/api.php', function(data, status, xhr) {
+                    console.log(data);
+                    console.log(status);
+                    console.log(xhr);
+                });
+            });
+            $('.jqAjax button:eq(3)').on('click', function() {
+                $.post('https://api.btstu.cn/yan/api.php', {
+                    charset: 'utf-8',
+                    encode: 'json'
+                }, function(data, status, xhr) {
+                    console.log(data);
+                    console.log(status);
+                    console.log(xhr);
+                });
+            });
+            $('.jqAjax button:eq(4)').on('click', function() {
+                $.ajax({
+                    url: 'https://api.btstu.cn/yan/api.php',
+                    type: 'GET',
+                    data: {'encode': 'js'},
+                    success: function(data, status, xhr) {
+                        console.log(data);
+                        console.log(status);
+                        console.log(xhr);
+                    }
+                });
+            });
+        })();
+
+        // form 表单
+        (function() {
+            document.querySelector('#form1').onsubmit = function(e) {
+                console.log('xxxx');
+                console.log($(this).serialize());
+                e.preventDefault();
+            }
+        })();
+    </script>
+
+
+    <!-- 导入art-template  -->
+    <script src="js/template-web.js"></script>
+    <!-- 定义模板: 模板的 HTML 结构，必须定义到 script 中 -->
+    <script type="text/html" id="tmp">
+        <!-- 标准语法 - 输出 -->
+        <h1>{{name}}</h1>
+        <!-- 标准语法 – 原文输出 -->
+        {{@test}}
+        <div>
+            <!-- 标准语法 – 条件输出 -->
+            {{if flag == 0}}
+            flag = 0
+            {{else if flag == 1}}
+            flage = 1
+            {{/if}}
+        </div>
+        <!-- 标准语法 – 循环输出 -->
+        {{each hobby}}
+            <li>循环索引：{{$index}}，循环项：{{$value}}</li>
+        {{/each}}
+        <!-- 标准语法 – 过滤器 -->
+        <h2>{{date | dateFormater}}</h2>
+    </script>
+    <script>
+        // 定义处理日期的过滤器函数
+        template.defaults.imports.dateFormater = function(date) {
+            let y = date.getFullYear();
+            let m = date.getMonth() + 1;
+            let d = date.getDate();
+            return y + '-' + m + '-' + d;
+        }
+
+        // 定义数据
+        let data = {
+            name: '张三',
+            test: '<h2>你好</h2>',
+            flag: 1,
+            hobby: ['吃饭', '睡觉', '打豆豆'],
+            date: new Date()
+        }
+
+        // 调用template函数 
+        let html = template('tmp', data);
+        console.log(html);
+
+        // 渲染HTML结构
+        document.querySelector('.container').innerHTML = html;
+
+        // exam() 函数
+        let str = 'hello';
+        let reg = /o/;
+        console.log(reg.exec(str));
+
+        // 提取分组
+        str = '<h2>{{name}}</h2>'
+        reg = /{{([a-zA-Z]+)}}/;
+        console.log(reg.exec(str));
+
+        // replace() 函数替换值
+        data = { name: '张三', age: 20 }
+        str = '<div>{{name}}今年{{ age }}岁了</div>';
+        reg = /{{\s*([A-Za-z]+)\s*}}/
+        let result = null;
+        while (result = reg.exec(str)) {
+            str = str.replace(result[0], data[result[1]]);
+        }
+        console.log(str);
+    </script>
+
+    <!-- 自定义简易模板引擎 -->
+    <script type="text/html" id="tmp-custom">
+        <div>姓名：{{name}}</div>
+        <div>年龄：{{ age }}</div>
+        <div>性别：{{  gender}}</div>
+        <div>住址：{{address  }}</div>
+    </script>
+    <script>
+        // 封装template函数
+        function template(id, data) {
+            let str = document.getElementById(id).innerHTML;
+            reg = /{{\s*([A-Za-z]+)\s*}}/;
+            let result = null;
+            while (result = reg.exec(str)) {
+                str = str.replace(result[0], data[result[1]]);
+            }
+            return str;
+        }
+        
+        // 定义数据
+        var d = { name: 'zs', age: 28, gender: '男', address: '北京' };
+    
+        // 调用模板引擎
+        var htmlStr = template('tmp-custom', d);
+        console.log(htmlStr);
+        // 渲染HTML结构
+        document.querySelector('.custom').innerHTML = htmlStr;
+    </script>
+</body>
+</html>
