@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>鼠标跟随效果</title>
+</head>
+<body>
+    <img src="img/angel.gif" alt="天使">
+</body>
+
+<script src="js/jquery-3.7.1.min.js"></script>
+<script>
+    $(function() {
+        // 步骤1. 定义节流阀
+        var timer = null;
+        $(document).mousemove(function(e) {
+            // 步骤2：判断节流阀是否为空
+            if (timer === null) {
+                // 步骤3：开启延时器
+                timer = setTimeout(function() {
+                    $('img').offset({
+                        left: e.pageX - $('img').width()/2,
+                        top: e.pageY - $('img').height()/2
+                    });
+                    clearTimeout(timer);
+                    timer = null;
+                }, 16);
+            }
+        });
+    });
+</script>
+</html>

@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>跨域</title>
+
+    <link rel="stylesheet" href="css/basic.css">
+
+    <style>
+        .taobao {
+            padding: 0;
+        }
+        .taobao img {
+            margin: 0 auto;
+            display: block;
+        }
+        .taobao ul {
+            list-style: none;
+            margin: 0;
+            padding: 0;
+            display: flex;
+        }
+        .taobao ul li {
+            width: 60px;
+            line-height: 24px;
+            font-size: 14px;
+            text-align: center;
+        }
+        .taobao ul li a.select {
+            color: white;
+            background-color: orange;
+        }
+        .taobao ul li a {
+            color: black;
+            width: 60px;
+            display: inline-block;
+            text-decoration: none;
+        }
+        .taobao ul li:last-child a:hover {
+            color: orange;
+            text-decoration: underline;
+        }
+        .taobao .search {
+            width: 100%;
+            border: 2px solid orange;
+            box-sizing: border-box;
+            display: flex;
+        }
+        .taobao .search input {
+            line-height: 24px;
+            outline: none;
+            border: none;
+            flex-grow: 1;
+        }
+        .taobao .search a {
+            width: 60px;
+            background-color: orange;
+            color: white;
+            text-align: center;
+            line-height: 24px;
+            font-size: 14px;
+            text-decoration: none;
+            letter-spacing: 10px;
+        }
+        .taobao .content {
+            width: 100%;
+            display: none;
+            border: 1px solid lightgray;
+            box-sizing: border-box;
+        }
+        .taobao .content .item {
+            line-height: 24px;
+            font-size: 14px;
+        }
+        .taobao .content .item:hover {
+            background-color: lightgray;
+        }
+    </style>
+</head>
+<body>
+    <div class="main">
+        <h2>跨域</h2>
+        <h3>同源与跨域</h3>
+        <div class="first">
+            <button>发生跨域</button>
+            <button>jquery跨域请求</button>
+        </div>
+        <h3>淘宝搜索案例</h3>
+        <div class="taobao">
+            <img src="img/taobao_logo.png" alt="">
+            <ul>
+                <li><a class="select" href="javascript:;">宝贝</a></li>
+                <li><a href="javascript:;">店铺</a></li>
+            </ul>
+            <div class="search">
+                <input type="search" placeholder="请输入要搜索的内容">
+                <a href="javascript:;">搜索</a>
+            </div>
+            <div class="content"></div>
+        </div>
+        <h3><a href="throttleExample.html">节流案例: 鼠标跟随效果</a></h3>
+    </div>
+
+    <script src="js/jquery-3.7.1.min.js"></script>
+    
+    <script>
+        // 发生跨域
+        $('.first button:eq(0)').on('click', function() {
+            $.get('https://suggest.taobao.com/sug?q=a', function(data, status, xhr) {
+                console.log(data, status, xhr);
+            })
+        });
+
+        // 定义一个 success 回调函数
+        function success(data) {
+            console.log(data);
+        }
+        success('"a": "A", "b": "B"');
+
+        $('.first button:eq(1)').on('click', function() {
+            $.ajax({
+                url: 'https://suggest.taobao.com/sug?q=a',
+                // 如果要使用 $.ajax() 发起 JSONP 请求，必须指定 datatype 为 jsonp
+                dataType: 'jsonp',
+                // 发送到服务端的参数名称，默认值为 callback
+                jsonp: 'callback',
+                // 自定义的回调函数名称，默认值为 jQueryxxx 格式
+                jsonpCallback: 'abc',
+                success: function(data, status, xhr) {
+                    console.log(data);
+                    console.log(status);
+                    console.log(xhr);
+                }
+            });
+        });
+    </script>
+
+    <!-- 通过 <script> 标签，请求接口数据 -->
+    <script src="js/getData.js?callback=success"></script>
+
+    <!-- JSONP 数据请求 -->
+    <script src="https://suggest.taobao.com/sug?callback=success&q=a"></script>
+
+    <!-- 模板引擎 -->
+    <script src="js/template-web.js"></script>
+    <script type="text/html" id="taobao-tmp">
+        {{each result}}
+            <div class="item">{{$value[0]}}</div>
+        {{/each}}
+    </script>
+    <!-- 淘宝搜索案例 -->
+    <script>
+        // 缓存数据
+        var chachData = {};
+            
+        // 获取数据
+        function getData(keyword) {
+            $.ajax({
+                url: 'https://suggest.taobao.com/sug?q=' + keyword,
+                dataType: 'jsonp',
+                success: function(data, style, xhr) {
+                    console.log(data, style, xhr);
+
+                    loadData(data);
+                    // 缓存数据
+                    chachData[keyword] = data;
+                }
+            })
+        }
+
+        // 渲染数据
+        function loadData(data) {
+            if (data.result.length > 0) {
+                let result = template('taobao-tmp', data);
+                $('.taobao .content').html(result).show();
+            } else {
+                $('.taobao .content').empty().hide();
+            }
+        }
+
+        // 防抖——延迟500ms执行
+        var timer = null;
+        function debounceSearch(keyword) {
+            if (timer === null) {
+                timer = setTimeout(function() {
+                    getData(keyword);
+                }, 500);
+            } else {
+                clearTimeout(timer);
+                timer = null;
+            }
+        }
+
+        // 搜索事件
+        $('.taobao .search input').on('keyup', function(e) {
+            let keyword = $(this).val().trim();
+            if (keyword.length > 0) {
+                let chach = chachData[keyword];
+                // 取缓存
+                if (chach) {
+                    loadData(chach);
+                } else { 
+                    debounceSearch(keyword);
+                }
+            } else {
+                $('.taobao .content').empty().hide();
+            }
+        });
+    </script>
+</body>
+</html>
