@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>请求 express 开发的接口</title>
+
+    <link rel="stylesheet" href="css/basic.css">
+</head>
+<body>
+    <div class="main">
+        <h2>请求 express 开发的接口</h2>
+        <h3>普通接口</h3>
+        <button id="btOne">GET请求</button>
+        <button id="btTwo">POST请求</button>
+        <h3>CORS 接口</h3>
+        <button id="btThree">GET请求</button>
+        <button id="btFour">POST请求</button>
+        <h3>预检请求 接口</h3>
+        <button id="btFive">DELETE请求</button>
+        <h3>JSONP 接口</h3>
+        <button id="btSix">GET请求</button>
+    </div>
+
+    <script src="js/jquery-3.7.1.min.js"></script>
+    <script>
+        $(function() {
+            $('#btOne').click(function() {
+                $.get('http://127.0.0.1:80/api/get', { a: "A", b: "B" }, function(data, status, xhr) {
+                    console.log(data, status, xhr);
+                });
+            });
+            $('#btTwo').click(function() {
+                $.post('http://127.0.0.1:80/api/post', { a: "A", b: "B" }, function(data, status, xhr) {
+                    console.log(data, status, xhr);
+                });
+            });
+            $('#btThree').click(function() {
+                $.get('http://127.0.0.1:80/cors/get', { a: "A", b: "B" }, function(data, status, xhr) {
+                    console.log(data, status, xhr);
+                });
+            });
+            $('#btFour').click(function() {
+                $.post('http://127.0.0.1:80/cors/post', { a: "A", b: "B" }, function(data, status, xhr) {
+                    console.log(data, status, xhr);
+                });
+            });
+            $('#btFive').click(function() {
+                $.ajax({
+                    type: 'delete',
+                    url: 'http://127.0.0.1:80/cors/delete',
+                    data: { a: "A", b: "B" },
+                    success: function(data, status, xhr) {
+                        console.log(data, status, xhr);
+                    }
+                });
+            });
+            $('#btSix').click(function() {
+                $.ajax({
+                    type: 'get',
+                    url: 'http://127.0.0.1:80/jsonp',
+                    dataType: 'jsonp',
+                    success: function(data, status, xhr) {
+                        console.log(data, status, xhr);
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>

@@ -1,7 +1,6 @@
 {
   "name": "Node",
   "version": "1.0.0",
-  "description": "",
   "main": "custom.js",
   "dependencies": {
     "moment": "^2.29.4"
@@ -12,5 +11,6 @@
   },
   "keywords": [],
   "author": "",
-  "license": "ISC"
+  "license": "ISC",
+  "description": ""
 }
