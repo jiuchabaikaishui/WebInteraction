@@ -12,16 +12,18 @@ app.use(session({
 // 添加解析body中数据的中间件
 app.use(express.urlencoded({ extended: false }));
 // 托管静态资源
-app.use(express.static('./pages'));
+// app.use(express.static('./pages'));
+app.use(express.static('../../js'));
 
 // 登录接口
 app.post('/api/login', function(req, res) {
+    console.log(req.body);
     if (req.body.username !== 'zs' && req.body.password !== '123456') {
         return res.send({ status: 1, message: '登录失败' });
     }
 
     // 将用户信息、登录状态存储到session中
-    req.session.user = { username: req.body.username };
+    req.session.username = req.body.username;
     req.session.islogin = true;
     res.send({ status: 0, message: '登录成功' });
 });

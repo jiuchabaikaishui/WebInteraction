@@ -5,17 +5,32 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>首页</title>
 
-    <link rel="stylesheet" href="../../js/jquery-3.7.1.min.js">
+    <script src="../../jquery-3.7.1.min.js"></script>
 </head>
 <body>
-    <button>登录</button>
+    <h1>首页</h1>
     <button>退出</button>
 
     <script>
         $(function() {
+            // 获取用户名
+            $.get('/api/username', function(data, status, xhr) {
+                console.log(data, status, xhr);
+                if (data.status === 0) {
+                    alert('欢迎您：' + data.username);
+                } else {
+                    alert('您尚未登录，请登录后再执行此操作！');
+                    location.href = './login.html'
+                }
+            });
+
+            // 退出
             $('button:first').on('click', function() {
-                $.post('/api/login', { username: 'zs', password: '123456'}, function(data, status, xhr) {
+                $.post('/api/logout', function(data, status, xhr) {
                     console.log(data, status, xhr);
+                    if (data.status === 0) {
+                        location.href = './login.html'
+                    }
                 });
             });
         });
