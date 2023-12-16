@@ -24,7 +24,7 @@ app.post('/api/login', function(req, res) {
         // 参数2：加密的秘钥
         // 参数3：配置对象，可以配置当前 token 的有效期
         // 记住：千万不要把密码加密到 token 字符中
-        const token = jwt.sign({ username: req.body.username }, secretKey, { expiresIn: '2m'});
+        const token = jwt.sign({ username: req.body.username }, secretKey, { expiresIn: '2h', algorithm: 'HS256'});
         res.send({
             status: 0,
             token: token,
@@ -38,10 +38,10 @@ app.post('/api/login', function(req, res) {
     }
 });
 app.get('/my/info', function(req, res) {
-    console.log(req.user);
+    console.log(req.auth);
     res.send({
         status: 0,
-        userinfo: req.user,
+        userinfo: req.auth,
         message: '请求成功'
     });
 });
