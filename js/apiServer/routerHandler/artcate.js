@@ -1,7 +1,7 @@
 const db = require('../db/index');
 const constValue = require('../middleware/constValue');
 
-const article = (req, res) => {
+const artcate = (req, res) => {
     db.query(constValue.selectArticle, (err, result) => {
         if (err) {
             res.cc(err);
@@ -90,7 +90,7 @@ const updatecate = (req, res) => {
 }
 
 module.exports = {
-    article,
+    artcate,
     addcates,
     deletecate,
     cates,

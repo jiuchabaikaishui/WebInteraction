@@ -24,6 +24,8 @@ const alias = joi.string().alphanum().required();
 const title = joi.string().required();
 const content = joi.string().required().allow('');
 const state = joi.string().valid('已发布', '草稿').required();
+const pagenum = joi.number().required();
+const pagesize = joi.number().required();
 
 exports.schema = {
     user: {
@@ -74,6 +76,28 @@ exports.schema = {
     },
     addArticle: {
         body: {
+            title,
+            content,
+            cate_id: id,
+            state
+        }
+    },
+    articles: {
+        query: {
+            pagenum,
+            pagesize,
+            cate_id: joi.number().integer().min(1).allow('').optional(),
+            state: joi.string().valid('已发布', '草稿').allow('').optional()
+        }
+    },
+    deleteArticle: {
+        params: {
+            id
+        }
+    },
+    updateArticle: {
+        body: {
+            id,
             title,
             content,
             cate_id: id,

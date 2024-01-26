@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 
 const handler = require('../routerHandler/artcate');
-router.get('/article', handler.article);
+router.get('/artcate', handler.artcate);
 
 const expressJoi = require('../middleware/expressJoi');
 const { schema } = require('../schema/user');

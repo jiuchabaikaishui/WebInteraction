@@ -21,12 +21,16 @@ const insertCates = `insert into article_cate set ?`;
 const deletecate = `update article_cate set is_delete = 1 where id = ?`;
 // 查找分类
 const cates = `select * from article_cate where id = ?`;
-// 查询分类id、名称或别名
+// 查询分类id、名称或别名 <>不等于
 const selectIdNameOrAlias = `select * from article_cate where id <> ? and (name = ? or alias = ?)`;
 // 更新分类
 const updateCates = `update article_cate set ? where id = ?`;
 // 插入文章
 const insertArticle = `insert into articles set ?`;
+// 删除文章
+const deleteArticle = `delete from articles where id = ?`;
+// 更新文章
+const updateArticle = `update articles set ? where id = ?`;
 
 // JWT 秘钥
 const jwtSecretKey = 'JWTSecretKeyabcABC123!@#JWTSecretKey';
@@ -52,5 +56,7 @@ module.exports = {
     insertArticle,
     jwtSecretKey,
     jwtAlgorithms,
-    jwtUnlessPath
+    jwtUnlessPath,
+    deleteArticle,
+    updateArticle
 }

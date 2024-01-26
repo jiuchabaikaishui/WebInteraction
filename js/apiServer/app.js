@@ -17,12 +17,12 @@ app.use(function(req, res, next) {
     next();
 });
 
-// 配置静态资源
-app.use('/uploads', express.static('uploads'));
-
 // 配置跨域中间件
 const cors = require('cors');
 app.use(cors());
+
+// 配置静态资源
+app.use('/uploads', express.static('uploads'));
 
 // 配置解析 application/x-www-form-urlencoded 格式的表单数据的中间件
 app.use(express.urlencoded({ extended: false }));
